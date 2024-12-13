@@ -1,11 +1,13 @@
-export class Conta{
+export abstract class Conta{
 
+    // Modelo de dados (Atributos)
     private _numero: number;
     private _agencia: number;
     private _tipo: number;
     private _titular: string;
     private _saldo: number;
 
+    // Gerar o Método Construtor
 	constructor(numero: number, agencia: number, tipo: number, titular: string, saldo: number) {
 		this._numero = numero;
 		this._agencia = agencia;
@@ -14,6 +16,7 @@ export class Conta{
 		this._saldo = saldo;
 	}
 	
+    // Gerar os Métodos Getter's e Setter's
 	public get numero(): number {
 		return this._numero;
 	}

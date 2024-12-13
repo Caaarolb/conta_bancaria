@@ -1,46 +1,25 @@
 import readlinesync = require("readline-sync");
 import { colors } from './src/util/Colors';
-import { Conta } from './src/model/Conta';
-import { ContaCorrente } from './src/model/ContaCorrente';
+import { ContaCorrente } from "./src/model/ContaCorrente";
 import { ContaPoupanca } from "./src/model/ContaPoupanca";
-
+import { ContaController } from "./src/controller/ContaController";
 
 export function main() {
 
-    let opcao: number;
-    
-   // Objeto da Classe Conta Corrente
-    const conta: Conta = new Conta(1, 123, 1, "Anahi", 10000);
-    conta.visualizar();
-    conta.sacar(10500);
-    conta.visualizar();
-    conta.depositar(5000);
-    conta.visualizar();
+    let opcao, numero, agencia, tipo, saldo, limite, aniversario: number;
+    let titular: string;
+    const tipoContas = ['Conta Corrente', 'Conta Poupanca'];
 
-   
-    const contacorrente: ContaCorrente = new ContaCorrente(2, 123, 1, "Dulce", 15000, 1000);
-    contacorrente.visualizar();
-    contacorrente.sacar(2000);
-    contacorrente.visualizar();
-    contacorrente.depositar(1000);
-    contacorrente.visualizar();
+    // Criando um Objeto da Classe ContaController
+    const contas = new ContaController();
 
-    // Objeto da Classe ContaPoupanca 
-    const contapoupanca: ContaPoupanca = new ContaPoupanca(1, 123, 2, "Alfonso", 1000, 10); // Numero, agência, tipo de conta, titular, saldo inicial, data de aniversario da conta
-    contapoupanca.visualizar();
-    contapoupanca.sacar(200);
-    contapoupanca.visualizar();
-    contapoupanca.depositar(1000);
-    contapoupanca.visualizar();
+   //Novas Instâncias da Classe ContaCorrente (Objetos)
+   contas.cadastrar(new ContaCorrente(contas.gerarNumero(), 1234, 1, 'Amanda Magro', 1000000.00, 100000.00));
+   contas.cadastrar(new ContaCorrente(contas.gerarNumero(), 4578, 1, 'João da Silva', 1000.00, 100.00));
 
-    const contapoupancaThalia: ContaPoupanca = new ContaPoupanca(2, 123, 2, "Thalia", 20000, 15);
-    contapoupancaThalia.visualizar();
-    contapoupancaThalia.sacar(1000);
-    contapoupancaThalia.visualizar();
-    contapoupancaThalia.depositar(1000);
-    contapoupancaThalia.visualizar();
-
-
+   // Novas Instâncias da Classe ContaPoupança (Objetos)
+   contas.cadastrar(new ContaPoupanca(contas.gerarNumero(), 5789, 2, "Geana Almeida", 10000, 10));
+   contas.cadastrar(new ContaPoupanca(contas.gerarNumero(), 5698, 2, "Jean Lima", 15000, 15));
 
     while (true) {
 
@@ -62,13 +41,15 @@ export function main() {
         console.log("            9 - Sair                                 ");
         console.log("                                                     ");
         console.log("*****************************************************");
-        console.log("                                                     ", colors.reset);
+        console.log("                                                     ", 
+        colors.reset);
 
         console.log("Entre com a opção desejada: ");
         opcao = readlinesync.questionInt("");
 
         if (opcao == 9) {
-            console.log(colors.fg.greenstrong, "\nBanco do Brazil com Z - O seu Futuro começa aqui!");
+            console.log(colors.fg.greenstrong, 
+                "\nBanco do Brazil com Z - O seu Futuro começa aqui!");
             sobre();
             console.log(colors.reset, "");
             process.exit(0);
@@ -76,47 +57,86 @@ export function main() {
 
         switch (opcao) {
             case 1:
-                console.log(colors.fg.whitestrong, "\n\nCriar Conta\n\n", colors.reset);
+                console.log(colors.fg.whitestrong, 
+                    "\n\nCriar Conta\n\n", colors.reset);
                 
-                keyPress()
-                break;
-            case 2:
-                console.log(colors.fg.whitestrong, "\n\nListar todas as Contas\n\n", colors.reset);
+                    console.log("Digite o Número da Agência: ");
+                    agencia = readlinesync.questionInt('');
+
+                    console.log("Digite o Nome do Titular: ");
+                    titular = readlinesync.question('');
+
+                    console.log("escolha o Tipo da Conta: ");
+                    tipo = readlinesync.keyInSelect(tipoContas, "", { cancel: false}) + 1;
+
+                    console.log("Digite o Saldo da Conta: ");
+                    saldo = readlinesync.questionFloat('');
+
+                    switch(tipo){
+                        case 1:
+                            console.log("Digite o Limite da Conta: ");
+                            limite = readlinesync.questionFloat('');
+                            contas.cadastrar(new ContaCorrente(contas.gerarNumero(), agencia, tipo, titular, saldo, limite))
+                        break;
+                        case 2:
+                            console.log("Digite o Dia do Aniversário da Poupança: ");
+                            aniversario = readlinesync.questionInt('');
+                            contas.cadastrar(new ContaPoupanca(contas.gerarNumero(), agencia, tipo, titular, saldo, aniversario))
+                        break;
+                    }
 
                 keyPress()
                 break;
+            case 2:
+                console.log(colors.fg.whitestrong, 
+                    "\n\nListar todas as Contas\n\n", colors.reset);
+                    contas.listarTodas();
+                keyPress()
+                break;
             case 3:
-                console.log(colors.fg.whitestrong, "\n\nConsultar dados da Conta - por número\n\n", colors.reset);
+                console.log(colors.fg.whitestrong, 
+                    "\n\nConsultar dados da Conta - por número\n\n", colors.reset);
+
+                    console.log("Digite o número da conta:");
+                    numero = readlinesync.questionInt('');
+
+                    contas.procurarPorNumero(numero);
 
                 keyPress()
                 break;
             case 4:
-                console.log(colors.fg.whitestrong, "\n\nAtualizar dados da Conta\n\n", colors.reset);
+                console.log(colors.fg.whitestrong, 
+                    "\n\nAtualizar dados da Conta\n\n", colors.reset);
 
                 keyPress()
                 break;
             case 5:
-                console.log(colors.fg.whitestrong, "\n\nApagar uma Conta\n\n", colors.reset);
+                console.log(colors.fg.whitestrong, 
+                    "\n\nApagar uma Conta\n\n", colors.reset);
 
                 keyPress()
                 break;
             case 6:
-                console.log(colors.fg.whitestrong, "\n\nSaque\n\n", colors.reset);
+                console.log(colors.fg.whitestrong, 
+                    "\n\nSaque\n\n", colors.reset);
 
                 keyPress()
                 break;
             case 7:
-                console.log(colors.fg.whitestrong, "\n\nDepósito\n\n", colors.reset);
+                console.log(colors.fg.whitestrong, 
+                    "\n\nDepósito\n\n", colors.reset);
 
                 keyPress()
                 break;
             case 8:
-                console.log(colors.fg.whitestrong, "\n\nTransferência entre Contas\n\n", colors.reset);
+                console.log(colors.fg.whitestrong, 
+                    "\n\nTransferência entre Contas\n\n", colors.reset);
 
                 keyPress()
                 break;
             default:
-                console.log(colors.fg.whitestrong, "\nOpção Inválida!\n", colors.reset);
+                console.log(colors.fg.whitestrong, 
+                    "\nOpção Inválida!\n", colors.reset);
 
                 keyPress()
                 break;
@@ -128,7 +148,7 @@ export function main() {
 /* Função com os dados da pessoa desenvolvedora */
 function sobre(): void {
     console.log("\n*****************************************************");
-    console.log("Projeto Desenvolvido por: Jeisa Boaventura");
+    console.log("Projeto Desenvolvido por: Jeisa Boaventura ");
     console.log("https://www.linkedin.com/in/-caroline-boaventura/");
     console.log("https://github.com/Caaarolb");
     console.log("*****************************************************");
